@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "arasan-mcp"
+version = "0.1.0"
+description = "MCP server wrapping Arasan UCI chess engine (MIT)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+arasan-mcp = "arasan_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/arasan_mcp"]
