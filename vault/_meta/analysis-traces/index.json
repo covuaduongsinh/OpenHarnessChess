@@ -1,0 +1,10 @@
+{
+  "generated_by": "scripts/ohcc/export_analysis_traces.py",
+  "games": [
+    "fools_mate.json",
+    "hanging_piece_trap.json",
+    "italian_capture.json",
+    "scholars_mate.json",
+    "simple_capture_lesson.json"
+  ]
+}

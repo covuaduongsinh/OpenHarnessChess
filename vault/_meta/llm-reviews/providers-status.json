@@ -1,0 +1,32 @@
+{
+  "providers": [
+    {
+      "id": "antigravity",
+      "label": "Antigravity (agy / Google)",
+      "ready": true,
+      "binary": "C:\\Users\\duongsinh\\AppData\\Local\\agy\\bin\\agy.EXE",
+      "detail": "1.1.13"
+    },
+    {
+      "id": "claude",
+      "label": "Claude Code CLI",
+      "ready": true,
+      "binary": "C:\\Users\\duongsinh\\.local\\bin\\claude.exe",
+      "detail": "claude.ai"
+    },
+    {
+      "id": "grok",
+      "label": "Grok Build CLI (xAI)",
+      "ready": true,
+      "binary": "C:\\Users\\duongsinh\\.grok\\bin\\grok.EXE",
+      "detail": "grok 1.0.3 (1a29d5bc12) [stable]"
+    },
+    {
+      "id": "codex",
+      "label": "Codex CLI (OpenAI)",
+      "ready": true,
+      "binary": "C:\\Users\\duongsinh\\.codex\\plugins\\.plugin-appserver\\codex.EXE",
+      "detail": "Codex CLI ready"
+    }
+  ]
+}

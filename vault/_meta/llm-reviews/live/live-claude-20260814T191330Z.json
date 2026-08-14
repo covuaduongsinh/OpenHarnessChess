@@ -1,0 +1,570 @@
+{
+  "ok": true,
+  "created": "2026-08-14T19:13:30.680778+00:00",
+  "provider": "claude",
+  "provider_label": "Claude Code",
+  "binary": "C:\\Users\\duongsinh\\.local\\bin\\claude.exe",
+  "game": {
+    "white": "Paul Morphy",
+    "black": "Duke Karl / Count Isouard",
+    "event": "Paris",
+    "headers": {
+      "Event": "Paris",
+      "Site": "Paris FRA",
+      "Date": "1858.??.??",
+      "EventDate": "?",
+      "Round": "?",
+      "Result": "1-0",
+      "White": "Paul Morphy",
+      "Black": "Duke Karl / Count Isouard",
+      "ECO": "C41",
+      "WhiteElo": "?",
+      "BlackElo": "?",
+      "PlyCount": "33",
+      "Source": "(London) Field, London, 1858.12.04, p458"
+    },
+    "moves": [
+      "e4",
+      "e5",
+      "Nf3",
+      "d6",
+      "d4",
+      "Bg4",
+      "dxe5",
+      "Bxf3",
+      "Qxf3",
+      "dxe5",
+      "Bc4",
+      "Nf6",
+      "Qb3",
+      "Qe7",
+      "Nc3",
+      "c6",
+      "Bg5",
+      "b5",
+      "Nxb5",
+      "cxb5",
+      "Bxb5+",
+      "Nbd7",
+      "O-O-O",
+      "Rd8",
+      "Rxd7",
+      "Rxd7",
+      "Rd1",
+      "Qe6",
+      "Bxd7+",
+      "Nxd7",
+      "Qb8+",
+      "Nxb8",
+      "Rd8#"
+    ],
+    "move_count": 33
+  },
+  "steps": [
+    {
+      "t_ms": 1104,
+      "name": "probe_cli",
+      "status": "ok",
+      "detail": "Claude Code CLI: ready",
+      "binary": "C:\\Users\\duongsinh\\.local\\bin\\claude.exe",
+      "provider": "claude"
+    },
+    {
+      "t_ms": 1104,
+      "name": "parse_pgn",
+      "status": "ok",
+      "detail": "White=Paul Morphy Black=Duke Karl / Count Isouard moves=33",
+      "headers": {
+        "Event": "Paris",
+        "Site": "Paris FRA",
+        "Date": "1858.??.??",
+        "EventDate": "?",
+        "Round": "?",
+        "Result": "1-0",
+        "White": "Paul Morphy",
+        "Black": "Duke Karl / Count Isouard",
+        "ECO": "C41",
+        "WhiteElo": "?",
+        "BlackElo": "?",
+        "PlyCount": "33",
+        "Source": "(London) Field, London, 1858.12.04, p458"
+      },
+      "moves": [
+        "e4",
+        "e5",
+        "Nf3",
+        "d6",
+        "d4",
+        "Bg4",
+        "dxe5",
+        "Bxf3",
+        "Qxf3",
+        "dxe5",
+        "Bc4",
+        "Nf6",
+        "Qb3",
+        "Qe7",
+        "Nc3",
+        "c6",
+        "Bg5",
+        "b5",
+        "Nxb5",
+        "cxb5",
+        "Bxb5+",
+        "Nbd7",
+        "O-O-O",
+        "Rd8",
+        "Rxd7",
+        "Rxd7",
+        "Rd1",
+        "Qe6",
+        "Bxd7+",
+        "Nxd7",
+        "Qb8+",
+        "Nxb8",
+        "Rd8#"
+      ]
+    },
+    {
+      "t_ms": 1125,
+      "name": "replay",
+      "status": "ok",
+      "detail": "Replay 33 half-moves (SAN→FEN)",
+      "ply_count": 33
+    },
+    {
+      "t_ms": 1130,
+      "name": "detect_moments",
+      "status": "ok",
+      "detail": "Heuristic chọn 4 teaching moment(s)",
+      "kinds": [
+        "hanging",
+        "hanging",
+        "hanging",
+        "hanging"
+      ]
+    },
+    {
+      "t_ms": 1130,
+      "name": "select_moment",
+      "status": "ok",
+      "detail": "Moment gửi LLM: SAN=Bxf3 kind=hanging",
+      "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5",
+      "san": "Bxf3"
+    },
+    {
+      "t_ms": 1130,
+      "name": "build_prompt",
+      "status": "ok",
+      "detail": "Prompt Thầy Tường (984 chars)",
+      "prompt_excerpt": "Bạn là Thầy Tường (CLB Cờ vua Dương Sinh). Phân tích ngắn vị trí cờ cho phụ huynh/GV.\n\nVán: Paris\nKhoảnh khắc (SAN): Bxf3\nFEN: rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5\n\nPGN:\n[Event \"Paris\"]\n[Site \"Paris FRA\"]\n[Date \"1858.??.??\"]\n[EventDate \"?\"]\n[Round \"?\"]\n["
+    },
+    {
+      "t_ms": 1130,
+      "name": "llm_start",
+      "status": "running",
+      "detail": "Gọi CLI provider=claude timeout=180s"
+    },
+    {
+      "t_ms": 33927,
+      "name": "llm_finish",
+      "status": "ok",
+      "detail": "Claude Code: ok in 32786ms",
+      "duration_ms": 32786,
+      "error": null
+    }
+  ],
+  "plies": [
+    {
+      "ply": 1,
+      "san": "e4",
+      "side": "white",
+      "fen_before": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "fen_after": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+      "signals": []
+    },
+    {
+      "ply": 2,
+      "san": "e5",
+      "side": "black",
+      "fen_before": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+      "fen_after": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+      "signals": []
+    },
+    {
+      "ply": 3,
+      "san": "Nf3",
+      "side": "white",
+      "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+      "fen_after": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+      "signals": []
+    },
+    {
+      "ply": 4,
+      "san": "d6",
+      "side": "black",
+      "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+      "fen_after": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+      "signals": []
+    },
+    {
+      "ply": 5,
+      "san": "d4",
+      "side": "white",
+      "fen_before": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+      "fen_after": "rnbqkbnr/ppp2ppp/3p4/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq d3 0 3",
+      "signals": []
+    },
+    {
+      "ply": 6,
+      "san": "Bg4",
+      "side": "black",
+      "fen_before": "rnbqkbnr/ppp2ppp/3p4/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq d3 0 3",
+      "fen_after": "rn1qkbnr/ppp2ppp/3p4/4p3/3PP1b1/5N2/PPP2PPP/RNBQKB1R w KQkq - 1 4",
+      "signals": []
+    },
+    {
+      "ply": 7,
+      "san": "dxe5",
+      "side": "white",
+      "fen_before": "rn1qkbnr/ppp2ppp/3p4/4p3/3PP1b1/5N2/PPP2PPP/RNBQKB1R w KQkq - 1 4",
+      "fen_after": "rn1qkbnr/ppp2ppp/3p4/4P3/4P1b1/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 4",
+      "signals": [
+        "capture"
+      ]
+    },
+    {
+      "ply": 8,
+      "san": "Bxf3",
+      "side": "black",
+      "fen_before": "rn1qkbnr/ppp2ppp/3p4/4P3/4P1b1/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 4",
+      "fen_after": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5",
+      "signals": [
+        "capture",
+        "hanging:f3"
+      ]
+    },
+    {
+      "ply": 9,
+      "san": "Qxf3",
+      "side": "white",
+      "fen_before": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5",
+      "fen_after": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5Q2/PPP2PPP/RNB1KB1R b KQkq - 0 5",
+      "signals": [
+        "capture",
+        "hanging:e5"
+      ]
+    },
+    {
+      "ply": 10,
+      "san": "dxe5",
+      "side": "black",
+      "fen_before": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5Q2/PPP2PPP/RNB1KB1R b KQkq - 0 5",
+      "fen_after": "rn1qkbnr/ppp2ppp/8/4p3/4P3/5Q2/PPP2PPP/RNB1KB1R w KQkq - 0 6",
+      "signals": [
+        "capture"
+      ]
+    },
+    {
+      "ply": 11,
+      "san": "Bc4",
+      "side": "white",
+      "fen_before": "rn1qkbnr/ppp2ppp/8/4p3/4P3/5Q2/PPP2PPP/RNB1KB1R w KQkq - 0 6",
+      "fen_after": "rn1qkbnr/ppp2ppp/8/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R b KQkq - 1 6",
+      "signals": []
+    },
+    {
+      "ply": 12,
+      "san": "Nf6",
+      "side": "black",
+      "fen_before": "rn1qkbnr/ppp2ppp/8/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R b KQkq - 1 6",
+      "fen_after": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R w KQkq - 2 7",
+      "signals": []
+    },
+    {
+      "ply": 13,
+      "san": "Qb3",
+      "side": "white",
+      "fen_before": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R w KQkq - 2 7",
+      "fen_after": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R b KQkq - 3 7",
+      "signals": [
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 14,
+      "san": "Qe7",
+      "side": "black",
+      "fen_before": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R b KQkq - 3 7",
+      "fen_after": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R w KQkq - 4 8",
+      "signals": [
+        "hanging:b7"
+      ]
+    },
+    {
+      "ply": 15,
+      "san": "Nc3",
+      "side": "white",
+      "fen_before": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R w KQkq - 4 8",
+      "fen_after": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R b KQkq - 5 8",
+      "signals": []
+    },
+    {
+      "ply": 16,
+      "san": "c6",
+      "side": "black",
+      "fen_before": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R b KQkq - 5 8",
+      "fen_after": "rn2kb1r/pp2qppp/2p2n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R w KQkq - 0 9",
+      "signals": []
+    },
+    {
+      "ply": 17,
+      "san": "Bg5",
+      "side": "white",
+      "fen_before": "rn2kb1r/pp2qppp/2p2n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R w KQkq - 0 9",
+      "fen_after": "rn2kb1r/pp2qppp/2p2n2/4p1B1/2B1P3/1QN5/PPP2PPP/R3K2R b KQkq - 1 9",
+      "signals": []
+    },
+    {
+      "ply": 18,
+      "san": "b5",
+      "side": "black",
+      "fen_before": "rn2kb1r/pp2qppp/2p2n2/4p1B1/2B1P3/1QN5/PPP2PPP/R3K2R b KQkq - 1 9",
+      "fen_after": "rn2kb1r/p3qppp/2p2n2/1p2p1B1/2B1P3/1QN5/PPP2PPP/R3K2R w KQkq b6 0 10",
+      "signals": []
+    },
+    {
+      "ply": 19,
+      "san": "Nxb5",
+      "side": "white",
+      "fen_before": "rn2kb1r/p3qppp/2p2n2/1p2p1B1/2B1P3/1QN5/PPP2PPP/R3K2R w KQkq b6 0 10",
+      "fen_after": "rn2kb1r/p3qppp/2p2n2/1N2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R b KQkq - 0 10",
+      "signals": [
+        "capture",
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 20,
+      "san": "cxb5",
+      "side": "black",
+      "fen_before": "rn2kb1r/p3qppp/2p2n2/1N2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R b KQkq - 0 10",
+      "fen_after": "rn2kb1r/p3qppp/5n2/1p2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R w KQkq - 0 11",
+      "signals": [
+        "capture",
+        "hanging:b5"
+      ]
+    },
+    {
+      "ply": 21,
+      "san": "Bxb5+",
+      "side": "white",
+      "fen_before": "rn2kb1r/p3qppp/5n2/1p2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R w KQkq - 0 11",
+      "fen_after": "rn2kb1r/p3qppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R b KQkq - 0 11",
+      "signals": [
+        "capture",
+        "check",
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 22,
+      "san": "Nbd7",
+      "side": "black",
+      "fen_before": "rn2kb1r/p3qppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R b KQkq - 0 11",
+      "fen_after": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R w KQkq - 1 12",
+      "signals": []
+    },
+    {
+      "ply": 23,
+      "san": "O-O-O",
+      "side": "white",
+      "fen_before": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R w KQkq - 1 12",
+      "fen_after": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R b kq - 2 12",
+      "signals": [
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 24,
+      "san": "Rd8",
+      "side": "black",
+      "fen_before": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R b kq - 2 12",
+      "fen_after": "3rkb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R w k - 3 13",
+      "signals": []
+    },
+    {
+      "ply": 25,
+      "san": "Rxd7",
+      "side": "white",
+      "fen_before": "3rkb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R w k - 3 13",
+      "fen_after": "3rkb1r/p2Rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R b k - 0 13",
+      "signals": [
+        "capture",
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 26,
+      "san": "Rxd7",
+      "side": "black",
+      "fen_before": "3rkb1r/p2Rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R b k - 0 13",
+      "fen_after": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R w k - 0 14",
+      "signals": [
+        "capture"
+      ]
+    },
+    {
+      "ply": 27,
+      "san": "Rd1",
+      "side": "white",
+      "fen_before": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R w k - 0 14",
+      "fen_after": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4 b k - 1 14",
+      "signals": [
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 28,
+      "san": "Qe6",
+      "side": "black",
+      "fen_before": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4 b k - 1 14",
+      "fen_after": "4kb1r/p2r1ppp/4qn2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 2 15",
+      "signals": []
+    },
+    {
+      "ply": 29,
+      "san": "Bxd7+",
+      "side": "white",
+      "fen_before": "4kb1r/p2r1ppp/4qn2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 2 15",
+      "fen_after": "4kb1r/p2B1ppp/4qn2/4p1B1/4P3/1Q6/PPP2PPP/2KR4 b k - 0 15",
+      "signals": [
+        "capture",
+        "check",
+        "hanging:e4"
+      ]
+    },
+    {
+      "ply": 30,
+      "san": "Nxd7",
+      "side": "black",
+      "fen_before": "4kb1r/p2B1ppp/4qn2/4p1B1/4P3/1Q6/PPP2PPP/2KR4 b k - 0 15",
+      "fen_after": "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 0 16",
+      "signals": [
+        "capture"
+      ]
+    },
+    {
+      "ply": 31,
+      "san": "Qb8+",
+      "side": "white",
+      "fen_before": "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 0 16",
+      "fen_after": "1Q2kb1r/p2n1ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4 b k - 1 16",
+      "signals": [
+        "check",
+        "hanging:a2,b8"
+      ]
+    },
+    {
+      "ply": 32,
+      "san": "Nxb8",
+      "side": "black",
+      "fen_before": "1Q2kb1r/p2n1ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4 b k - 1 16",
+      "fen_after": "1n2kb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4 w k - 0 17",
+      "signals": [
+        "capture"
+      ]
+    },
+    {
+      "ply": 33,
+      "san": "Rd8#",
+      "side": "white",
+      "fen_before": "1n2kb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4 w k - 0 17",
+      "fen_after": "1n1Rkb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2K5 b k - 1 17",
+      "signals": [
+        "check",
+        "mate",
+        "hanging:a2"
+      ]
+    }
+  ],
+  "moments": [
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 8,
+      "san": "Bxf3",
+      "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5",
+      "note": "Quân treo: f3",
+      "drop_cp": null,
+      "bloom": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **e4** — em tự chỉ ra.)",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 9,
+      "san": "Qxf3",
+      "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5Q2/PPP2PPP/RNB1KB1R b KQkq - 0 5",
+      "note": "Quân treo: e5",
+      "drop_cp": null,
+      "bloom": {
+        "remember": "Em chỉ ra quân nào trên bàn đang **bị đe dọa** rõ nhất?",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 13,
+      "san": "Qb3",
+      "fen": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R b KQkq - 3 7",
+      "note": "Quân treo: e4",
+      "drop_cp": null,
+      "bloom": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **b7** — em tự chỉ ra.)",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 14,
+      "san": "Qe7",
+      "fen": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R w KQkq - 4 8",
+      "note": "Quân treo: b7",
+      "drop_cp": null,
+      "bloom": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **e4** — em tự chỉ ra.)",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    }
+  ],
+  "selected_moment": {
+    "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5",
+    "san": "Bxf3",
+    "kind": "hanging"
+  },
+  "prompt": "Bạn là Thầy Tường (CLB Cờ vua Dương Sinh). Phân tích ngắn vị trí cờ cho phụ huynh/GV.\n\nVán: Paris\nKhoảnh khắc (SAN): Bxf3\nFEN: rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5\n\nPGN:\n[Event \"Paris\"]\n[Site \"Paris FRA\"]\n[Date \"1858.??.??\"]\n[EventDate \"?\"]\n[Round \"?\"]\n[Result \"1-0\"]\n[White \"Paul Morphy\"]\n[Black \"Duke Karl / Count Isouard\"]\n[ECO \"C41\"]\n[WhiteElo \"?\"]\n[BlackElo \"?\"]\n[PlyCount \"33\"]\n[Source \"(London) Field, London, 1858.12.04, p458\"]\n\n1. e4 e5 2. Nf3 d6 3. d4 Bg4 4. dxe5 Bxf3 5. Qxf3 dxe5 6. Bc4 Nf6 7. Qb3 Qe7 8. Nc3 c6 9. Bg5 b5 10. Nxb5 cxb5 11. Bxb5+ Nbd7 12. O-O-O Rd8 13. Rxd7 Rxd7 14. Rd1 Qe6 15. Bxd7+ Nxd7\n16. Qb8+ Nxb8 17. Rd8# 1-0\n\nYêu cầu (Socratic + Bloom):\n1) Nêu 1 khoảnh khắc dạy (không dump eval thô / không nói \"máy bảo +2\").\n2) Viết 3 câu hỏi gợi mở: Nhận biết / Áp dụng / Phân tích (mỗi tầng 1 câu).\n3) 1 gợi ý cho phụ huynh luyện 5 phút ở nhà.\n4) Ký tên cuối: — Thầy Tường via LLM\n\nTrả lời tiếng Việt, tối đa ~250 từ. Không viết code.",
+  "llm": {
+    "provider": "claude",
+    "label": "Claude Code",
+    "status": "ok",
+    "binary": "C:\\Users\\duongsinh\\.local\\bin\\claude.exe",
+    "duration_ms": 32786,
+    "model_note": "CLI: claude.exe",
+    "prompt_excerpt": "Bạn là Thầy Tường (CLB Cờ vua Dương Sinh). Phân tích ngắn vị trí cờ cho phụ huynh/GV.  Ván: Paris Khoảnh khắc (SAN): Bxf3 FEN: rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5  PGN: [Event \"Paris\"] [Site \"Paris FRA\"] [Date \"18",
+    "response": "**Khoảnh khắc dạy — nước 5 của Trắng: bắt lại quân trên f3 bằng gì?**\n\nĐen vừa chơi 4...Bxf3, đổi tượng lấy mã. Lý do: sau 4.dxe5, nếu Đen ăn lại ngay 4...dxe5 thì 5.Qxd8+ Kxd8 đuổi vua Đen mất quyền nhập thành. Vậy 4...Bxf3 là nước \"chữa cháy\", nhưng cái giá là Đen giao cặp tượng và mở đường cho Trắng phát triển.\n\nTrắng có hai cách ăn lại: **Qxf3** hoặc **gxf3**. Morphy chọn Qxf3 — hậu ra trận có ích (nhắm f7 và b7), cấu trúc tốt vẫn nguyên vẹn. gxf3 thì phá nát cánh vua của chính mình để đổi lấy... không gì cả. Bài học lớn: *ăn lại bằng quân giúp mình phát triển, đừng ăn lại bằng tốt làm hỏng nhà mình.*\n\n**Ba câu hỏi gợi mở**\n- **Nhận biết:** Sau khi Đen chơi Bxf3, Trắng có mấy cách ăn lại quân trên ô f3? Kể tên từng cách.\n- **Áp dụng:** Nếu Trắng chơi gxf3, cấu trúc tốt cánh vua Trắng trông thế nào? Vua Trắng còn nhập thành cánh vua an toàn không?\n- **Phân tích:** Vì sao Đen phải đổi tượng lấy mã, dù ai cũng biết \"tượng thường mạnh hơn mã ở thế mở\"? Điều gì đã ép Đen?\n\n**Luyện 5 phút ở nhà (phụ huynh làm được)**\nBày thế cờ này lên bàn. Hỏi con: \"Ăn lại bằng hậu hay bằng tốt?\" Cho con chơi thử **cả hai**, mỗi bên 5 nước tiếp theo, rồi tự nói xem vua bên nào an toàn hơn. Không cần máy, không cần điểm số — chỉ cần con giải thích được *bằng lời*.\n\n— Thầy Tường via LLM",
+    "error": "",
+    "game_file": "",
+    "fen": "",
+    "created": "2026-08-14T19:13:30.680563+00:00"
+  },
+  "total_ms": 33927
+}

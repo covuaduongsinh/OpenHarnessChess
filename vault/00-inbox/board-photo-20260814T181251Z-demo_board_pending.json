@@ -1,0 +1,8 @@
+{
+  "image": "D:\\code\\OpenHarnessChess\\data\\fixtures\\boards\\demo_board_pending.jpg",
+  "fen": null,
+  "source": "pending_review",
+  "message": "\u1ea2nh \u0111\u00e3 nh\u1eadn. Ch\u01b0a c\u00f3 backend nh\u1eadn di\u1ec7n qu\u00e2n t\u1ef1 \u0111\u1ed9ng (MIT-safe). Cung c\u1ea5p fen_hint ho\u1eb7c ch\u1ec9nh FEN trong vault inbox.",
+  "warnings": [],
+  "created": "20260814T181251Z"
+}

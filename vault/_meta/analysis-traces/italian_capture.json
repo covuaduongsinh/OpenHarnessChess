@@ -1,0 +1,463 @@
+{
+  "gameFile": "italian_capture.pgn",
+  "event": "OHCC Sample — Italian capture",
+  "white": "An",
+  "black": "Binh",
+  "moveCount": 15,
+  "moves": [
+    "e4",
+    "e5",
+    "Nf3",
+    "Nc6",
+    "Bc4",
+    "Bc5",
+    "c3",
+    "Nf6",
+    "d4",
+    "exd4",
+    "cxd4",
+    "Bb4+",
+    "Bd2",
+    "Bxd2+",
+    "Nbxd2"
+  ],
+  "stages": [
+    {
+      "id": 1,
+      "model": "ohcc.chess_core.pgn",
+      "title": "Doc & parse PGN",
+      "status": "ok",
+      "detail": "Headers: White=An, Black=Binh; 15 nuoc SAN.",
+      "io": {
+        "input": "italian_capture.pgn",
+        "output": "15 moves"
+      }
+    },
+    {
+      "id": 2,
+      "model": "ohcc.chess_core.san + board + movegen",
+      "title": "Replay van (SAN -> FEN)",
+      "status": "ok",
+      "detail": "Ap dung 15 half-move; moi ply co fen_before/fen_after. MIT, khong python-chess.",
+      "io": {
+        "input": "SAN list",
+        "output": "15 ReplayPly"
+      }
+    },
+    {
+      "id": 3,
+      "model": "ohcc.scaffolding.mistake_detect + heuristics",
+      "title": "Heuristic: bat tin hieu day",
+      "status": "ok",
+      "detail": "Quet tung ply: capture / check / mate / hanging pieces. Chon 8 teaching moment.",
+      "io": {
+        "input": "15 plies",
+        "output": [
+          "hanging",
+          "hanging",
+          "hanging",
+          "hanging",
+          "check",
+          "check",
+          "capture",
+          "capture"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "model": "arasan-mcp (UCI MIT)",
+      "title": "Engine Arasan eval drop",
+      "status": "skipped",
+      "detail": "Chua bat --arasan / ARASAN_PATH trong ban demo nay. Khi bat: compare fen_before vs fen_after -> drop_cp -> inaccuracy/mistake/blunder. Cam Stockfish/Maia.",
+      "io": {
+        "input": "FEN pairs",
+        "output": "drop_cp (optional)"
+      }
+    },
+    {
+      "id": 5,
+      "model": "ohcc.scaffolding.questions (Bloom)",
+      "title": "Sinh cau hoi Bloom x3",
+      "status": "ok",
+      "detail": "Moi moment -> remember / apply / analyze (Socratic). Khong spoiler nuoc di giai.",
+      "io": {
+        "input": "8 moments",
+        "output": "24 prompts"
+      }
+    },
+    {
+      "id": 6,
+      "model": "Thay Tuong persona",
+      "title": "Khung su pham (coach)",
+      "status": "policy",
+      "detail": "System prompt: Socratic first, 1 cau hoi/luot, khong dump eval tho cho hoc vien mam non/tieu hoc.",
+      "io": {
+        "input": "prompts + FEN",
+        "output": "loi coach (runtime LLM)"
+      }
+    }
+  ],
+  "plies": [
+    {
+      "ply": 1,
+      "san": "e4",
+      "side": "white",
+      "fen_before": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "fen_after": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 2,
+      "san": "e5",
+      "side": "black",
+      "fen_before": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+      "fen_after": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 3,
+      "san": "Nf3",
+      "side": "white",
+      "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+      "fen_after": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 4,
+      "san": "Nc6",
+      "side": "black",
+      "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+      "fen_after": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 5,
+      "san": "Bc4",
+      "side": "white",
+      "fen_before": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+      "fen_after": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 6,
+      "san": "Bc5",
+      "side": "black",
+      "fen_before": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+      "fen_after": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 7,
+      "san": "c3",
+      "side": "white",
+      "fen_before": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+      "fen_after": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R b KQkq - 0 4",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 8,
+      "san": "Nf6",
+      "side": "black",
+      "fen_before": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R b KQkq - 0 4",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R w KQkq - 1 5",
+      "signals": [],
+      "selected_as_teaching_moment": false
+    },
+    {
+      "ply": 9,
+      "san": "d4",
+      "side": "white",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R w KQkq - 1 5",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2BPP3/2P2N2/PP3PPP/RNBQK2R b KQkq d3 0 5",
+      "signals": [
+        {
+          "code": "hanging",
+          "label": "Quan treo sau nuoc: e4",
+          "squares": [
+            "e4"
+          ]
+        }
+      ],
+      "selected_as_teaching_moment": true
+    },
+    {
+      "ply": 10,
+      "san": "exd4",
+      "side": "black",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2BPP3/2P2N2/PP3PPP/RNBQK2R b KQkq d3 0 5",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BpP3/2P2N2/PP3PPP/RNBQK2R w KQkq - 0 6",
+      "signals": [
+        {
+          "code": "capture",
+          "label": "Nuoc bat quan (SAN co x)"
+        }
+      ],
+      "selected_as_teaching_moment": true
+    },
+    {
+      "ply": 11,
+      "san": "cxd4",
+      "side": "white",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BpP3/2P2N2/PP3PPP/RNBQK2R w KQkq - 0 6",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BPP3/5N2/PP3PPP/RNBQK2R b KQkq - 0 6",
+      "signals": [
+        {
+          "code": "capture",
+          "label": "Nuoc bat quan (SAN co x)"
+        },
+        {
+          "code": "hanging",
+          "label": "Quan treo sau nuoc: e4",
+          "squares": [
+            "e4"
+          ]
+        }
+      ],
+      "selected_as_teaching_moment": true
+    },
+    {
+      "ply": 12,
+      "san": "Bb4+",
+      "side": "black",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BPP3/5N2/PP3PPP/RNBQK2R b KQkq - 0 6",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP3PPP/RNBQK2R w KQkq - 1 7",
+      "signals": [
+        {
+          "code": "check",
+          "label": "Chieu vua sau nuoc di"
+        }
+      ],
+      "selected_as_teaching_moment": true
+    },
+    {
+      "ply": 13,
+      "san": "Bd2",
+      "side": "white",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP3PPP/RNBQK2R w KQkq - 1 7",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP1B1PPP/RN1QK2R b KQkq - 2 7",
+      "signals": [
+        {
+          "code": "hanging",
+          "label": "Quan treo sau nuoc: e4",
+          "squares": [
+            "e4"
+          ]
+        }
+      ],
+      "selected_as_teaching_moment": true
+    },
+    {
+      "ply": 14,
+      "san": "Bxd2+",
+      "side": "black",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP1B1PPP/RN1QK2R b KQkq - 2 7",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1b1PPP/RN1QK2R w KQkq - 0 8",
+      "signals": [
+        {
+          "code": "capture",
+          "label": "Nuoc bat quan (SAN co x)"
+        },
+        {
+          "code": "check",
+          "label": "Chieu vua sau nuoc di"
+        },
+        {
+          "code": "hanging",
+          "label": "Quan treo sau nuoc: d2",
+          "squares": [
+            "d2"
+          ]
+        }
+      ],
+      "selected_as_teaching_moment": true
+    },
+    {
+      "ply": 15,
+      "san": "Nbxd2",
+      "side": "white",
+      "fen_before": "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1b1PPP/RN1QK2R w KQkq - 0 8",
+      "fen_after": "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1N1PPP/R2QK2R b KQkq - 0 8",
+      "signals": [
+        {
+          "code": "capture",
+          "label": "Nuoc bat quan (SAN co x)"
+        }
+      ],
+      "selected_as_teaching_moment": false
+    }
+  ],
+  "moments": [
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 9,
+      "san": "d4",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2BPP3/2P2N2/PP3PPP/RNBQK2R b KQkq d3 0 5",
+      "note": "Quân treo: e4",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: find_hanging_pieces(fen_after) khong rong"
+      ],
+      "bloom_outputs": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **c5** — em tự chỉ ra.)",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 11,
+      "san": "cxd4",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BPP3/5N2/PP3PPP/RNBQK2R b KQkq - 0 6",
+      "note": "Quân treo: e4",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: find_hanging_pieces(fen_after) khong rong"
+      ],
+      "bloom_outputs": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **c5** — em tự chỉ ra.)",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 13,
+      "san": "Bd2",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP1B1PPP/RN1QK2R b KQkq - 2 7",
+      "note": "Quân treo: e4",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: find_hanging_pieces(fen_after) khong rong"
+      ],
+      "bloom_outputs": {
+        "remember": "Em chỉ ra quân nào trên bàn đang **bị đe dọa** rõ nhất?",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "hanging",
+      "severity": "mistake",
+      "ply": 14,
+      "san": "Bxd2+",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1b1PPP/RN1QK2R w KQkq - 0 8",
+      "note": "Quân treo: d2",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: find_hanging_pieces(fen_after) khong rong"
+      ],
+      "bloom_outputs": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **e4** — em tự chỉ ra.)",
+        "apply": "Em thử tìm cách **cứu** quân đang treo: chạy, che, hoặc bắt đổi. Em chọn cách nào trước?",
+        "analyze": "Vì sao quân lại trở thành **quân treo** sau nước vừa rồi? Em sẽ nhìn **bạn bảo vệ** trước hay sau khi đi?"
+      }
+    },
+    {
+      "kind": "check",
+      "severity": "tip",
+      "ply": 12,
+      "san": "Bb4+",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BPP3/5N2/PP3PPP/RNBQK2R b KQkq - 0 6",
+      "note": "Vị trí trước nước chiếu",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: is_check == True (SAN +/# hoac board.in_check)"
+      ],
+      "bloom_outputs": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **c5** — em tự chỉ ra.)",
+        "apply": "Em tìm **một** nước chiếu (hoặc nước buộc vua phải phản ứng). Chưa cần nước hay nhất — hãy nói nước em chọn và vì sao.",
+        "analyze": "Sau ý tưởng chiếu này, cấu trúc vua hai bên thay đổi thế nào? Cánh nào **chắc** hơn, cánh nào **hở** hơn?"
+      }
+    },
+    {
+      "kind": "check",
+      "severity": "tip",
+      "ply": 14,
+      "san": "Bxd2+",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/8/1bBPP3/5N2/PP1B1PPP/RN1QK2R b KQkq - 2 7",
+      "note": "Vị trí trước nước chiếu",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: is_check == True (SAN +/# hoac board.in_check)"
+      ],
+      "bloom_outputs": {
+        "remember": "Trước nước chiếu, em nhìn các đường tấn công: quân nào đang **nhắm** tới vua đối phương?",
+        "apply": "Em tìm **một** nước chiếu (hoặc nước buộc vua phải phản ứng). Chưa cần nước hay nhất — hãy nói nước em chọn và vì sao.",
+        "analyze": "Sau ý tưởng chiếu này, cấu trúc vua hai bên thay đổi thế nào? Cánh nào **chắc** hơn, cánh nào **hở** hơn?"
+      }
+    },
+    {
+      "kind": "capture",
+      "severity": "tip",
+      "ply": 10,
+      "san": "exd4",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2BPP3/2P2N2/PP3PPP/RNBQK2R b KQkq d3 0 5",
+      "note": "Vị trí trước nước bắt quân",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: is_capture == True va khong phai check"
+      ],
+      "bloom_outputs": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **c5** — em tự chỉ ra.)",
+        "apply": "Ở thế trước `exd4`, em có nước **bắt quân an toàn** nào không? Em mô tả ô đến (không cần ký hiệu chuyên sâu).",
+        "analyze": "Nếu không đi `exd4` mà đổi hướng, vua em có an toàn hơn không? Em giải thích ngắn."
+      }
+    },
+    {
+      "kind": "capture",
+      "severity": "tip",
+      "ply": 11,
+      "san": "cxd4",
+      "fen": "r1bqk2r/pppp1ppp/2n2n2/2b5/2BpP3/2P2N2/PP3PPP/RNBQK2R w KQkq - 0 6",
+      "note": "Vị trí trước nước bắt quân",
+      "drop_cp": null,
+      "detection_rules": [
+        "Rule: is_capture == True va khong phai check"
+      ],
+      "bloom_outputs": {
+        "remember": "Quân nào đang **không có bạn bảo vệ**? (Gợi ý vùng: ô gần **e4** — em tự chỉ ra.)",
+        "apply": "Ở thế trước `cxd4`, em có nước **bắt quân an toàn** nào không? Em mô tả ô đến (không cần ký hiệu chuyên sâu).",
+        "analyze": "Nếu không đi `cxd4` mà đổi hướng, vua em có an toàn hơn không? Em giải thích ngắn."
+      }
+    }
+  ],
+  "models_summary": [
+    {
+      "name": "chess_core",
+      "license": "MIT (in-repo)",
+      "role": "PGN parse + SAN replay + board"
+    },
+    {
+      "name": "heuristic detector",
+      "license": "MIT (in-repo)",
+      "role": "check/capture/hanging/mate signals"
+    },
+    {
+      "name": "Arasan UCI",
+      "license": "MIT (external binary)",
+      "role": "eval drop (optional)",
+      "active": false
+    },
+    {
+      "name": "Bloom scaffolding",
+      "license": "MIT (in-repo)",
+      "role": "3-layer Socratic questions"
+    },
+    {
+      "name": "Thay Tuong",
+      "license": "prompt MIT",
+      "role": "pedagogy / voice (LLM via CLI provider)"
+    }
+  ]
+}
