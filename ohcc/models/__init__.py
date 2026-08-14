@@ -1,0 +1,1 @@
+"""Shared OHCC domain models."""
