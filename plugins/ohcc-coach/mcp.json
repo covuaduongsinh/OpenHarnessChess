@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "arasan": {
+      "command": "python",
+      "args": ["-m", "arasan_mcp"],
+      "env": {
+        "ARASAN_PATH": "${workspaceFolder}/vendor/arasan/bin/arasan",
+        "PYTHONPATH": "${workspaceFolder}/mcp-servers/arasan-mcp/src"
+      }
+    },
+    "vision-board": {
+      "command": "python",
+      "args": ["-m", "vision_board_mcp"],
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/mcp-servers/vision-board-mcp/src"
+      }
+    }
+  }
+}

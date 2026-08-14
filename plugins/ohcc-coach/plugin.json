@@ -1,0 +1,13 @@
+{
+  "name": "ohcc-coach",
+  "version": "0.1.0",
+  "description": "OpenHarness Chess Coaching — Thầy Tường, Socratic analysis, Bloom scaffolding (MIT).",
+  "enabled_by_default": true,
+  "author": {
+    "name": "CLB Cờ vua Dương Sinh"
+  },
+  "skills": "./skills",
+  "agents": "./agents",
+  "commands": "./commands",
+  "hooks": "./hooks"
+}
