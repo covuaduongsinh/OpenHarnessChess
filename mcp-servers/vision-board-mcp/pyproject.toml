@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vision-board-mcp"
+version = "0.1.0"
+description = "MCP server for real chessboard photo → FEN (Zalo/Telegram intake)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+vision-board-mcp = "vision_board_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vision_board_mcp"]
