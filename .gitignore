@@ -27,6 +27,15 @@ htmlcov/
 # React TUI frontend
 frontend/terminal/node_modules/
 
+# OHCC admin portal (when scaffolded)
+admin-portal/node_modules/
+admin-portal/.next/
+
+# Arasan engine binaries (keep LICENSE/NOTICE; never commit executables)
+vendor/arasan/bin/*
+!vendor/arasan/bin/.gitkeep
+vendor/arasan/bin/*.exe
+
 # User data (never commit API keys or session data)
 .openharness/
 react_tui_smoke.txt

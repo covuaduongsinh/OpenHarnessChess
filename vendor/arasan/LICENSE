@@ -1,0 +1,8 @@
+MIT License (Arasan)
+
+This file is a placeholder for the upstream Arasan MIT license text.
+When you vendor Arasan, replace this file with the exact LICENSE from:
+https://github.com/jdart1/arasan-chess
+
+Until the upstream text is copied here, treat Arasan as MIT-licensed software
+and do not ship binaries without retaining the original copyright notice.
