@@ -10,6 +10,18 @@ The format is based on Keep a Changelog, and this project currently tracks chang
 
 - Hooks now support a `priority` field (default `0`). Within an event, hooks run highest-priority first, and hooks sharing a priority keep their registration order. This lets users order, for example, a security-check hook ahead of a logging hook regardless of where each is declared in settings or contributed by plugins.
 - `edit_file` and `write_file` in the React TUI now preview a unified diff before applying file changes, let users approve once or for the rest of the session, and skip the extra prompt automatically in `full_auto` mode.
+- **Claude Subscription via official Claude Code (Agent SDK)**: profile `claude-subscription` now spawns the local `claude` binary through `claude-agent-sdk` instead of scraping OAuth tokens and calling the Messages API. This bills as Claude Code included usage (Pro/Max), matching the Javis-style engine. Optional dep: `pip install 'openharness-ai[claude-code]'`. Requires Claude Code CLI logged in (`claude auth login`).
+- **Codex / Grok / Antigravity CLI engines** (same pattern as Claude):
+  - `codex` profile spawns official `codex exec` (ChatGPT/Codex subscription) — no `auth.json` scrape for inference.
+  - New `grok` profile spawns official Grok Build CLI (`grok -p`) for SuperGrok / X Premium+.
+  - New `antigravity` profile spawns Google Antigravity CLI (`agy`) for personal Google subscription (Gemini CLI personal tiers were cut mid-2026).
+  - Auth helpers: `oh auth codex-login`, `oh auth grok-login`, `oh auth antigravity-login`.
+
+### Changed
+
+- `oh auth claude-login` / `codex-login` now **check** vendor CLI login status; they no longer bind scraped OAuth tokens for model calls on those paths.
+- On CLI subscription paths (Claude/Codex/Grok/Antigravity), agent tools run inside the **vendor CLI** (not OpenHarness's 43-tool registry). API-key providers still use the native OpenHarness tool loop.
+- Profile `gemini` remains **API-key only**; use `antigravity` for Google subscription CLI.
 
 ### Fixed
 

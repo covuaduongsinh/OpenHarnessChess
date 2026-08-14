@@ -218,11 +218,25 @@ def default_provider_profiles() -> dict[str, ProviderProfile]:
             default_model="gpt-5.4",
         ),
         "codex": ProviderProfile(
-            label="Codex Subscription",
+            label="Codex Subscription (CLI)",
             provider="openai_codex",
-            api_format="openai",
+            api_format="codex_cli",
             auth_source="codex_subscription",
             default_model="gpt-5.4",
+        ),
+        "grok": ProviderProfile(
+            label="Grok Build (CLI subscription)",
+            provider="grok",
+            api_format="grok_cli",
+            auth_source="grok_cli",
+            default_model="default",
+        ),
+        "antigravity": ProviderProfile(
+            label="Google Antigravity (CLI subscription)",
+            provider="antigravity",
+            api_format="antigravity_cli",
+            auth_source="antigravity_cli",
+            default_model="default",
         ),
         "copilot": ProviderProfile(
             label="GitHub Copilot",
@@ -240,7 +254,7 @@ def default_provider_profiles() -> dict[str, ProviderProfile]:
             base_url="https://api.moonshot.cn/v1",
         ),
         "gemini": ProviderProfile(
-            label="Google Gemini",
+            label="Google Gemini (API key)",
             provider="gemini",
             api_format="openai",
             auth_source="gemini_api_key",
@@ -359,7 +373,13 @@ def auth_source_provider_name(auth_source: str) -> str:
         "anthropic_api_key": "anthropic",
         "openai_api_key": "openai",
         "codex_subscription": "openai_codex",
+        "codex_cli": "openai_codex",
         "claude_subscription": "anthropic_claude",
+        "claude_code_cli": "anthropic_claude",
+        "grok_cli": "grok",
+        "grok_subscription": "grok",
+        "antigravity_cli": "antigravity",
+        "agy_cli": "antigravity",
         "copilot_oauth": "copilot",
         "dashscope_api_key": "dashscope",
         "bedrock_api_key": "bedrock",
@@ -420,6 +440,10 @@ def default_auth_source_for_provider(provider: str, api_format: str | None = Non
         return "claude_subscription"
     if provider == "openai_codex":
         return "codex_subscription"
+    if provider in {"grok", "grok_cli", "xai_grok"}:
+        return "grok_cli"
+    if provider in {"antigravity", "google_antigravity", "agy"}:
+        return "antigravity_cli"
     if provider == "copilot":
         return "copilot_oauth"
     if provider == "dashscope":
@@ -761,44 +785,73 @@ class Settings(BaseModel):
         profile_name, profile = self.resolve_profile()
         provider = profile.provider.strip()
         auth_source = profile.auth_source.strip() or default_auth_source_for_provider(provider, profile.api_format)
-        if auth_source in {"codex_subscription", "claude_subscription"}:
-            env_auth_token = os.environ.get("ANTHROPIC_AUTH_TOKEN", "").strip()
-            if auth_source == "claude_subscription" and env_auth_token:
+        if auth_source in {
+            "codex_subscription",
+            "codex_cli",
+            "claude_subscription",
+            "claude_code_cli",
+            "grok_cli",
+            "grok_subscription",
+            "antigravity_cli",
+            "agy_cli",
+        }:
+            # Subscription CLI engines spawn vendor binaries; do not scrape OAuth tokens.
+            if auth_source in {"claude_subscription", "claude_code_cli"}:
+                from openharness.api.claude_cli_detect import claude_auth_status
+
+                status = claude_auth_status()
+                if not status.ready:
+                    raise ValueError(
+                        status.detail
+                        or "Claude Code CLI is not ready. Run `claude auth login`."
+                    )
                 return ResolvedAuth(
                     provider=provider,
-                    auth_kind="oauth",
-                    value=env_auth_token,
-                    source="env:ANTHROPIC_AUTH_TOKEN",
+                    auth_kind="claude_code_cli",
+                    value="claude-code-cli",
+                    source=f"claude-code:{status.cli_path}",
                     state="configured",
                 )
-            from openharness.auth.external import (
-                is_third_party_anthropic_endpoint,
-                load_external_credential,
-            )
-            from openharness.auth.storage import load_external_binding
+            if auth_source in {"codex_subscription", "codex_cli"}:
+                from openharness.api.codex_cli_engine import codex_cli_status
 
-            if auth_source == "claude_subscription" and is_third_party_anthropic_endpoint(profile.base_url):
-                raise ValueError(
-                    "Claude subscription auth only supports direct Anthropic/Claude endpoints. "
-                    "Use an API-key-backed Anthropic-compatible profile for third-party base URLs."
+                ready, detail, path = codex_cli_status()
+                if not ready:
+                    raise ValueError(detail)
+                return ResolvedAuth(
+                    provider=provider,
+                    auth_kind="codex_cli",
+                    value="codex-cli",
+                    source=f"codex-cli:{path}",
+                    state="configured",
                 )
-            binding = load_external_binding(auth_source_provider_name(auth_source))
-            if binding is None:
-                raise ValueError(
-                    f"No external auth binding found for {auth_source}. Run 'oh auth "
-                    f"{'codex-login' if auth_source == 'codex_subscription' else 'claude-login'}' first."
+            if auth_source in {"grok_cli", "grok_subscription"}:
+                from openharness.api.grok_cli_engine import grok_cli_status
+
+                ready, detail, path = grok_cli_status()
+                if not ready:
+                    raise ValueError(detail)
+                return ResolvedAuth(
+                    provider=provider,
+                    auth_kind="grok_cli",
+                    value="grok-cli",
+                    source=f"grok-cli:{path}",
+                    state="configured",
                 )
-            credential = load_external_credential(
-                binding,
-                refresh_if_needed=(auth_source == "claude_subscription"),
-            )
-            return ResolvedAuth(
-                provider=provider,
-                auth_kind=credential.auth_kind,
-                value=credential.value,
-                source=f"external:{credential.source_path}",
-                state="configured",
-            )
+            if auth_source in {"antigravity_cli", "agy_cli"}:
+                from openharness.api.antigravity_cli_engine import antigravity_cli_status
+
+                ready, detail, path = antigravity_cli_status()
+                if not ready:
+                    raise ValueError(detail)
+                return ResolvedAuth(
+                    provider=provider,
+                    auth_kind="antigravity_cli",
+                    value="antigravity-cli",
+                    source=f"antigravity-cli:{path}",
+                    state="configured",
+                )
+            raise ValueError(f"Unsupported CLI subscription auth source: {auth_source}")
 
         if auth_source == "copilot_oauth":
             return ResolvedAuth(

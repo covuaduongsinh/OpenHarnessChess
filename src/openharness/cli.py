@@ -1725,8 +1725,19 @@ def _login_provider(provider: str) -> None:
         _run_copilot_login()
         return
 
-    if provider in ("openai_codex", "anthropic_claude"):
-        _bind_external_provider(provider)
+    if provider == "openai_codex":
+        # Subscription path uses official Codex CLI; no token binding.
+        auth_codex_login()
+        return
+    if provider == "anthropic_claude":
+        # Subscription path uses official Claude Code CLI; no token binding.
+        auth_claude_login()
+        return
+    if provider in {"grok", "grok_cli", "xai_grok"}:
+        auth_grok_login()
+        return
+    if provider in {"antigravity", "google_antigravity", "agy"}:
+        auth_antigravity_login()
         return
 
     if provider in ("anthropic", "openai", "dashscope", "bedrock", "vertex", "moonshot", "gemini", "minimax", "modelscope"):
@@ -1950,14 +1961,91 @@ def auth_copilot_login() -> None:
 
 @auth_app.command("codex-login")
 def auth_codex_login() -> None:
-    """Bind OpenHarness to a local Codex CLI subscription session."""
-    _bind_external_provider("openai_codex")
+    """Check Codex CLI login for the subscription engine path.
+
+    OpenHarness spawns official ``codex exec`` and does not scrape auth.json for HTTP.
+    """
+    from openharness.api.codex_cli_engine import codex_cli_status
+
+    ready, detail, path = codex_cli_status()
+    if path:
+        print(f"Codex CLI: {path}", flush=True)
+    if ready:
+        print(f"Auth: ready ({detail})", flush=True)
+        print("Use `oh provider use codex` then `oh` / `openh`.", flush=True)
+        return
+    print(detail, file=sys.stderr, flush=True)
+    print("Run: codex login", file=sys.stderr, flush=True)
+    raise typer.Exit(1)
+
+
+@auth_app.command("grok-login")
+def auth_grok_login() -> None:
+    """Check Grok Build CLI for the subscription engine path."""
+    from openharness.api.grok_cli_engine import grok_cli_status
+
+    ready, detail, path = grok_cli_status()
+    if path:
+        print(f"Grok CLI: {path}", flush=True)
+    if ready:
+        print(f"Auth: ready ({detail})", flush=True)
+        print("Use `oh provider use grok` then `oh` / `openh`.", flush=True)
+        print("If prompts fail auth, run: grok login", flush=True)
+        return
+    print(detail, file=sys.stderr, flush=True)
+    print("Install: irm https://x.ai/cli/install.ps1 | iex", file=sys.stderr, flush=True)
+    print("Then: grok login", file=sys.stderr, flush=True)
+    raise typer.Exit(1)
+
+
+@auth_app.command("antigravity-login")
+def auth_antigravity_login() -> None:
+    """Check Google Antigravity CLI (`agy`) for the subscription engine path."""
+    from openharness.api.antigravity_cli_engine import antigravity_cli_status
+
+    ready, detail, path = antigravity_cli_status()
+    if path:
+        print(f"Antigravity CLI: {path}", flush=True)
+    if ready:
+        print(f"Auth: ready ({detail})", flush=True)
+        print("Use `oh provider use antigravity` then `oh` / `openh`.", flush=True)
+        print("If prompts fail auth, run `agy` once and complete Google login.", flush=True)
+        return
+    print(detail, file=sys.stderr, flush=True)
+    print(
+        "Install: irm https://antigravity.google/cli/install.ps1 | iex",
+        file=sys.stderr,
+        flush=True,
+    )
+    raise typer.Exit(1)
 
 
 @auth_app.command("claude-login")
 def auth_claude_login() -> None:
-    """Bind OpenHarness to a local Claude CLI subscription session."""
-    _bind_external_provider("anthropic_claude")
+    """Check Claude Code CLI login for the subscription engine path.
+
+    OpenHarness no longer scrapes OAuth tokens from ~/.claude/credentials.
+    Subscription traffic spawns the official ``claude`` binary (Agent SDK).
+    """
+    from openharness.api.claude_cli_detect import claude_auth_status
+
+    status = claude_auth_status()
+    if not status.cli_path:
+        print(status.detail or "Claude Code CLI not found on PATH.", file=sys.stderr, flush=True)
+        raise typer.Exit(1)
+    print(f"Claude Code CLI: {status.cli_path}", flush=True)
+    if status.version:
+        print(f"Version: {status.version}", flush=True)
+    if status.ready:
+        extra = status.subscription_type or status.auth_method or "logged-in"
+        if status.email:
+            extra = f"{extra}, {status.email}"
+        print(f"Auth: ready ({extra})", flush=True)
+        print("Use `oh provider use claude-subscription` then `oh` / `openh`.", flush=True)
+        return
+    print(status.detail or "Claude Code is not logged in.", file=sys.stderr, flush=True)
+    print("Run: claude auth login", file=sys.stderr, flush=True)
+    raise typer.Exit(1)
 
 
 @auth_app.command("copilot-logout")

@@ -317,7 +317,10 @@ oh provider use <profile>
 | Workflow | What it is | Typical backends |
 |----------|------------|------------------|
 | **Anthropic-Compatible API** | Anthropic-style request format | Claude official, Kimi, GLM, MiniMax, internal Anthropic-compatible gateways |
-| **Claude Subscription** | Claude CLI subscription bridge | Local `~/.claude/.credentials.json` |
+| **Claude Subscription** | Official Claude Code engine (Agent SDK spawn) | Local `claude` CLI login (`claude auth login`); optional `openharness-ai[claude-code]` |
+| **Codex Subscription** | Official Codex CLI (`codex exec`) | Local `codex login` (ChatGPT/Codex) |
+| **Grok Build** | Official Grok CLI (`grok -p`) | SuperGrok / X Premium+ via `grok login` |
+| **Google Antigravity** | Official Antigravity CLI (`agy`) | Google account login via `agy` (personal Gemini CLI tiers deprecated mid-2026) |
 | **OpenAI-Compatible API** | OpenAI-style request format | OpenAI official, OpenRouter, DashScope, DeepSeek, SiliconFlow, Groq, Ollama, GitHub Models |
 | **Codex Subscription** | Codex CLI subscription bridge | Local `~/.codex/auth.json` |
 | **GitHub Copilot** | Copilot OAuth workflow | GitHub Copilot device-flow login |

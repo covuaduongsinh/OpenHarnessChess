@@ -8,9 +8,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Iterable
 
+from openharness.api.antigravity_cli_engine import AntigravityCliEngine, uses_antigravity_cli_engine
+from openharness.api.claude_cli_detect import uses_claude_code_engine
+from openharness.api.claude_code_engine import ClaudeCodeEngine
+from openharness.api.cli_agent_base import SubprocessCliEngine
 from openharness.api.client import AnthropicApiClient, SupportsStreamingMessages
+from openharness.api.codex_cli_engine import CodexCliEngine, uses_codex_cli_engine
 from openharness.api.codex_client import CodexApiClient
 from openharness.api.copilot_client import CopilotClient
+from openharness.api.grok_cli_engine import GrokCliEngine, uses_grok_cli_engine
 from openharness.api.openai_client import OpenAICompatibleClient
 from openharness.api.provider import auth_status, detect_provider
 from openharness.bridge import get_bridge_manager
@@ -127,7 +133,7 @@ class RuntimeBundle:
     tool_registry: ToolRegistry
     app_state: AppStateStore
     hook_executor: HookExecutor
-    engine: QueryEngine
+    engine: QueryEngine | ClaudeCodeEngine | SubprocessCliEngine
     commands: object
     external_api_client: bool
     enforce_max_turns: bool = True
@@ -190,6 +196,32 @@ class RuntimeBundle:
         return "\n".join(lines)
 
 
+def _build_cli_agent_engine(
+    settings,
+    *,
+    cwd: str,
+    system_prompt: str,
+    tool_metadata: dict[str, object],
+) -> ClaudeCodeEngine | SubprocessCliEngine:
+    """Construct the vendor CLI engine for subscription-style profiles."""
+    kwargs = {
+        "cwd": cwd,
+        "model": settings.model,
+        "system_prompt": system_prompt,
+        "permission_mode": settings.permission.mode.value,
+        "tool_metadata": tool_metadata,
+    }
+    if uses_claude_code_engine(settings):
+        return ClaudeCodeEngine(**kwargs)
+    if uses_codex_cli_engine(settings):
+        return CodexCliEngine(**kwargs)
+    if uses_grok_cli_engine(settings):
+        return GrokCliEngine(**kwargs)
+    if uses_antigravity_cli_engine(settings):
+        return AntigravityCliEngine(**kwargs)
+    raise ValueError("No CLI agent engine matched the active provider profile.")
+
+
 def _resolve_api_client_from_settings(settings) -> SupportsStreamingMessages:
     """Build the appropriate API client for the resolved settings."""
     # Ensure profile fields (base_url, model, api_format) are projected to settings
@@ -211,19 +243,33 @@ def _resolve_api_client_from_settings(settings) -> SupportsStreamingMessages:
             else settings.model
         )
         return CopilotClient(model=copilot_model)
-    if settings.provider == "openai_codex":
-        auth = _safe_resolve_auth()
-        return CodexApiClient(
-            auth_token=auth.value,
-            base_url=settings.base_url,
-        )
-    if settings.provider == "anthropic_claude":
-        return AnthropicApiClient(
-            auth_token=_safe_resolve_auth().value,
-            base_url=settings.base_url,
-            claude_oauth=True,
-            auth_token_resolver=lambda: settings.resolve_auth().value,
-        )
+    if uses_codex_cli_engine(settings) or settings.provider == "openai_codex":
+        # Codex subscription path spawns official `codex` CLI (not token HTTP client).
+        return CodexCliEngine(
+            cwd=Path.cwd(),
+            model=settings.model,
+            permission_mode=settings.permission.mode.value,
+        ).api_client
+    if settings.provider == "anthropic_claude" or uses_claude_code_engine(settings):
+        # Subscription path uses ClaudeCodeEngine (spawn official `claude`), not
+        # OAuth-token Messages API. Keep a placeholder client for hooks/context only.
+        return ClaudeCodeEngine(
+            cwd=Path.cwd(),
+            model=settings.model,
+            permission_mode=settings.permission.mode.value,
+        ).api_client
+    if uses_grok_cli_engine(settings):
+        return GrokCliEngine(
+            cwd=Path.cwd(),
+            model=settings.model,
+            permission_mode=settings.permission.mode.value,
+        ).api_client
+    if uses_antigravity_cli_engine(settings):
+        return AntigravityCliEngine(
+            cwd=Path.cwd(),
+            model=settings.model,
+            permission_mode=settings.permission.mode.value,
+        ).api_client
     if settings.api_format in ("openai", "openai_compat"):
         auth = _safe_resolve_auth()
         return OpenAICompatibleClient(
@@ -248,16 +294,33 @@ def _print_auth_resolution_error(settings, exc: Exception) -> None:
         auth_source = ""
 
     message = str(exc).strip() or exc.__class__.__name__
-    if auth_source in {"claude_subscription", "codex_subscription"}:
-        login_command = "claude-login" if auth_source == "claude_subscription" else "codex-login"
-        provider_name = profile_name or (
-            "claude-subscription" if auth_source == "claude_subscription" else "codex"
+    if auth_source in {
+        "claude_subscription",
+        "claude_code_cli",
+        "codex_subscription",
+        "codex_cli",
+        "grok_cli",
+        "grok_subscription",
+        "antigravity_cli",
+        "agy_cli",
+    }:
+        hints = {
+            "claude_subscription": ("Claude Code", "claude auth login", "claude-subscription"),
+            "claude_code_cli": ("Claude Code", "claude auth login", "claude-subscription"),
+            "codex_subscription": ("Codex CLI", "codex login", "codex"),
+            "codex_cli": ("Codex CLI", "codex login", "codex"),
+            "grok_cli": ("Grok Build CLI", "grok login", "grok"),
+            "grok_subscription": ("Grok Build CLI", "grok login", "grok"),
+            "antigravity_cli": ("Antigravity CLI", "agy (login once)", "antigravity"),
+            "agy_cli": ("Antigravity CLI", "agy (login once)", "antigravity"),
+        }
+        label, login_cmd, profile = hints.get(
+            auth_source, ("CLI subscription", "login the vendor CLI", profile_name or "default")
         )
         print(
             f"Error: {message}\n"
-            f"  This profile uses subscription auth, not an API key.\n"
-            f"  Run `oh auth {login_command}` to bind the local CLI session, then\n"
-            f"  run `oh provider use {provider_name}` to activate it.",
+            f"  This profile uses {label} (subscription), not an API key.\n"
+            f"  Run `{login_cmd}`, then `oh provider use {profile}`.",
             file=sys.stderr,
         )
         return
@@ -315,12 +378,24 @@ async def build_runtime(
     normalized_skill_dirs = tuple(str(Path(path).expanduser().resolve()) for path in (extra_skill_dirs or ()))
     normalized_plugin_roots = tuple(str(Path(path).expanduser().resolve()) for path in (extra_plugin_roots or ()))
     plugins = load_plugins(settings, cwd, extra_roots=normalized_plugin_roots)
+    cli_agent_mode = api_client is None and (
+        uses_claude_code_engine(settings)
+        or uses_codex_cli_engine(settings)
+        or uses_grok_cli_engine(settings)
+        or uses_antigravity_cli_engine(settings)
+    )
     if api_client:
         resolved_api_client = api_client
+    elif cli_agent_mode:
+        # Placeholder only — model calls go through vendor CLI engines.
+        engine_probe = _build_cli_agent_engine(settings, cwd=cwd, system_prompt="", tool_metadata={})
+        resolved_api_client = engine_probe.api_client
     else:
         resolved_api_client = _resolve_api_client_from_settings(settings)
     mcp_manager = McpClientManager(load_mcp_server_configs(settings, plugins))
-    await mcp_manager.connect_all()
+    # CLI agent engines own tools inside the vendor binary; skip OH MCP connect noise.
+    if not cli_agent_mode:
+        await mcp_manager.connect_all()
     tool_registry = create_default_tool_registry(mcp_manager)
     # Register plugin-provided tools
     for plugin in plugins:
@@ -397,36 +472,55 @@ async def build_runtime(
         for key, value in restore_tool_metadata.items():
             restored_metadata[key] = value
 
-    engine = QueryEngine(
-        api_client=resolved_api_client,
-        tool_registry=tool_registry,
-        permission_checker=PermissionChecker(settings.permission),
-        cwd=cwd,
-        model=settings.model,
-        system_prompt=system_prompt_text,
-        max_tokens=settings.max_tokens,
-        context_window_tokens=settings.context_window_tokens or settings.memory.context_window_tokens,
-        auto_compact_threshold_tokens=(
-            settings.auto_compact_threshold_tokens
-            or settings.memory.auto_compact_threshold_tokens
-        ),
-        max_turns=engine_max_turns,
-        permission_prompt=permission_prompt,
-        ask_user_prompt=ask_user_prompt,
-        hook_executor=hook_executor,
-        settings=settings,
-        tool_metadata={
-            "mcp_manager": mcp_manager,
-            "bridge_manager": bridge_manager,
-            "extra_skill_dirs": normalized_skill_dirs,
-            "extra_plugin_roots": normalized_plugin_roots,
-            "session_id": session_id,
-            "edit_approval_prompt": edit_approval_prompt,
-            "vision_model_config": _resolve_vision_config(settings),
-            "image_generation_config": _resolve_image_generation_config(settings),
-            **restored_metadata,
-        },
-    )
+    tool_metadata = {
+        "mcp_manager": mcp_manager,
+        "bridge_manager": bridge_manager,
+        "extra_skill_dirs": normalized_skill_dirs,
+        "extra_plugin_roots": normalized_plugin_roots,
+        "session_id": session_id,
+        "edit_approval_prompt": edit_approval_prompt,
+        "vision_model_config": _resolve_vision_config(settings),
+        "image_generation_config": _resolve_image_generation_config(settings),
+        **restored_metadata,
+    }
+    if cli_agent_mode:
+        tool_metadata["engine"] = (
+            "claude_code"
+            if uses_claude_code_engine(settings)
+            else "codex_cli"
+            if uses_codex_cli_engine(settings)
+            else "grok_cli"
+            if uses_grok_cli_engine(settings)
+            else "antigravity_cli"
+        )
+        engine = _build_cli_agent_engine(
+            settings,
+            cwd=cwd,
+            system_prompt=system_prompt_text,
+            tool_metadata=tool_metadata,
+        )
+        engine.set_max_turns(engine_max_turns)
+    else:
+        engine = QueryEngine(
+            api_client=resolved_api_client,
+            tool_registry=tool_registry,
+            permission_checker=PermissionChecker(settings.permission),
+            cwd=cwd,
+            model=settings.model,
+            system_prompt=system_prompt_text,
+            max_tokens=settings.max_tokens,
+            context_window_tokens=settings.context_window_tokens or settings.memory.context_window_tokens,
+            auto_compact_threshold_tokens=(
+                settings.auto_compact_threshold_tokens
+                or settings.memory.auto_compact_threshold_tokens
+            ),
+            max_turns=engine_max_turns,
+            permission_prompt=permission_prompt,
+            ask_user_prompt=ask_user_prompt,
+            hook_executor=hook_executor,
+            settings=settings,
+            tool_metadata=tool_metadata,
+        )
     if autodream_context is not None:
         engine.tool_metadata["autodream_context"] = autodream_context
     # Restore messages from a saved session if provided
@@ -596,16 +690,34 @@ def sync_app_state(bundle: RuntimeBundle) -> None:
 def refresh_runtime_client(bundle: RuntimeBundle) -> None:
     """Refresh the active runtime client after provider/auth/profile changes."""
     settings = bundle.current_settings()
-    if not bundle.external_api_client:
+    cli_mode = (
+        uses_claude_code_engine(settings)
+        or uses_codex_cli_engine(settings)
+        or uses_grok_cli_engine(settings)
+        or uses_antigravity_cli_engine(settings)
+    )
+    if cli_mode:
+        metadata = dict(bundle.engine.tool_metadata)
+        engine = _build_cli_agent_engine(
+            settings,
+            cwd=bundle.cwd,
+            system_prompt=bundle.engine.system_prompt,
+            tool_metadata=metadata,
+        )
+        engine.load_messages(bundle.engine.messages)
+        bundle.engine = engine
+        bundle.api_client = engine.api_client
+    elif not bundle.external_api_client:
         bundle.api_client = _resolve_api_client_from_settings(settings)
-        bundle.engine.set_api_client(bundle.api_client)
+        if not isinstance(bundle.engine, (ClaudeCodeEngine, SubprocessCliEngine)):
+            bundle.engine.set_api_client(bundle.api_client)
+            bundle.engine.set_permission_checker(PermissionChecker(settings.permission))
         bundle.hook_executor.update_context(
             api_client=bundle.api_client,
             default_model=settings.model,
         )
     bundle.engine.set_model(settings.model)
     bundle.engine.set_effort(settings.effort)
-    bundle.engine.set_permission_checker(PermissionChecker(settings.permission))
     system_prompt = build_runtime_system_prompt(
         settings,
         cwd=bundle.cwd,

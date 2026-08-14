@@ -44,16 +44,30 @@ def detect_provider(settings: Settings) -> ProviderInfo:
     if settings.provider == "openai_codex":
         return ProviderInfo(
             name="openai-codex",
-            auth_kind="external_oauth",
+            auth_kind="codex_cli",
             voice_supported=False,
             voice_reason=_VOICE_REASON["openai_codex"],
         )
     if settings.provider == "anthropic_claude":
         return ProviderInfo(
             name="claude-subscription",
-            auth_kind="external_oauth",
+            auth_kind="claude_code_cli",
             voice_supported=False,
             voice_reason=_VOICE_REASON["anthropic_claude"],
+        )
+    if settings.provider in {"grok", "grok_cli", "xai_grok"}:
+        return ProviderInfo(
+            name="grok-cli",
+            auth_kind="grok_cli",
+            voice_supported=False,
+            voice_reason="voice mode is not wired for Grok Build CLI",
+        )
+    if settings.provider in {"antigravity", "google_antigravity", "agy"}:
+        return ProviderInfo(
+            name="antigravity-cli",
+            auth_kind="antigravity_cli",
+            voice_supported=False,
+            voice_reason="voice mode is not wired for Antigravity CLI",
         )
     if settings.api_format == "copilot":
         return ProviderInfo(
@@ -105,11 +119,37 @@ def auth_status(settings: Settings) -> str:
         if auth_info.enterprise_url:
             return f"configured (enterprise: {auth_info.enterprise_url})"
         return "configured"
+    # Vendor CLI subscription paths: official binary login (no OAuth token scrape).
+    if settings.provider == "anthropic_claude" or settings.provider == "anthropic_claude_code":
+        from openharness.api.claude_cli_detect import claude_auth_status
+
+        status = claude_auth_status()
+        if status.ready:
+            label = status.subscription_type or status.auth_method or "claude-code"
+            return f"configured (claude-code {label})"
+        if not status.cli_path:
+            return "missing (install Claude Code CLI)"
+        return "missing (run `claude auth login`)"
+    if settings.provider in {"openai_codex", "codex_cli"}:
+        from openharness.api.codex_cli_engine import codex_cli_status
+
+        ready, detail, _path = codex_cli_status()
+        return f"configured (codex-cli)" if ready else f"missing ({detail[:80]})"
+    if settings.provider in {"grok", "grok_cli", "xai_grok"}:
+        from openharness.api.grok_cli_engine import grok_cli_status
+
+        ready, detail, _path = grok_cli_status()
+        return f"configured (grok-cli)" if ready else f"missing ({detail[:80]})"
+    if settings.provider in {"antigravity", "google_antigravity", "agy"}:
+        from openharness.api.antigravity_cli_engine import antigravity_cli_status
+
+        ready, detail, _path = antigravity_cli_status()
+        return f"configured (antigravity-cli)" if ready else f"missing ({detail[:80]})"
     try:
         resolved = settings.resolve_auth()
     except ValueError as exc:
         if settings.provider == "openai_codex":
-            return "missing (run 'oh auth codex-login')"
+            return "missing (run `codex login`)"
         if settings.provider == "anthropic_claude":
             binding = load_external_binding("anthropic_claude")
             if binding is not None:
@@ -119,7 +159,7 @@ def auth_status(settings: Settings) -> str:
             message = str(exc)
             if "third-party" in message:
                 return "invalid base_url"
-            return "missing (run 'oh auth claude-login')"
+            return "missing (run `claude auth login`)"
         return "missing"
     if resolved.source.startswith("external:"):
         return f"configured ({resolved.source.removeprefix('external:')})"
