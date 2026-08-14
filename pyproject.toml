@@ -44,6 +44,9 @@ dev = [
     "ruff>=0.5.0",
     "mypy>=1.10.0",
 ]
+claude-code = [
+    "claude-agent-sdk>=0.2.100",
+]
 
 [project.scripts]
 openharness = "openharness.cli:app"
@@ -52,7 +55,7 @@ openh = "openharness.cli:app"
 ohmo = "ohmo.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/openharness", "ohmo"]
+packages = ["src/openharness", "ohmo", "ohcc"]
 
 [tool.hatch.build]
 exclude = [
@@ -75,6 +78,12 @@ exclude = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+pythonpath = [
+    "src",
+    ".",
+    "mcp-servers/arasan-mcp/src",
+    "mcp-servers/vision-board-mcp/src",
+]
 
 [tool.ruff]
 line-length = 100
